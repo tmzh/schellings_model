@@ -12,11 +12,15 @@ const cellSpacing = 1,
 const updateDuration = 125,
     updateDelay = updateDuration / 500;
 
+let cell = svg.append("g")
+    .attr("class", "cells")
+    .attr("transform", "translate(" + offset + "," + (offset + 30) + ")")
+    .selectAll("rect");
 
 const label = svg.append("text")
     .attr("class", "label");
 
-const n0 = grid.size();
+const n0 = cell.size();
 const n1 = 50*50
 const n2 = Math.floor(Math.sqrt(n1))
 
@@ -25,21 +29,10 @@ for (let i = 0; i < n2; i++) {
     board[i] = new Array(n2);
 }
 
-let grid = svg.append("g")
-    .attr("class", "cells")
-    .attr("transform", "translate(" + offset + "," + (offset + 30) + ")")
-    .selectAll("rect");
-
-let row = grid.selectAll(".row")
-    .data(board)
-    .attr("class", "row")
-
-/*
 cell = cell
     .data(d3.range(n1));
-*/
 
-grid.enter().append("rect")
+cell.enter().append("rect")
     .attr("width", 0)
     .attr("height", cellSize)
     .attr("x", i => (cellSpacing + cellSize) * (Math.floor(i % n2)))
