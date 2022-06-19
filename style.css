@@ -6,3 +6,38 @@ html, body {
 canvas {
   display: block;
 }
+
+#settings {
+  width: 100px;
+}
+
+#controls {
+  display: flex;
+  margin-top: 15px;
+}
+
+.command {
+  width: 80px;
+}
+
+#controls {
+  display: flex;
+  margin-top: 15px;
+}
+
+#settings {
+  width: 100px
+}
+
+#settings input {
+  margin-bottom: 10px;
+}
+
+#settings2 {
+  width: 320px;
+}
+
+#settings2 > label {
+  width: 160px;
+  display: inline-block;
+}

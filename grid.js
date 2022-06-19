@@ -23,6 +23,7 @@ const label = svg.append("text")
 const n0 = cell.size();
 const n1 = 50 * 50
 const n2 = Math.floor(Math.sqrt(n1))
+let threshold = 0.33;
 
 const tenants = {
     Empty: 0,
@@ -48,11 +49,11 @@ const rowIndex = i => Math.floor(i / n2)
 for (let i = 0; i < n2; i++) {
     for (let j = 0; j < n2; j++) {
         if (Math.random() <= 0.05) {
-            tenant = 0;
+            tenant = tenants.Empty;
         } else if (Math.random() <= 0.5) {
-            tenant = 1;
+            tenant = tenants.Red;
         } else {
-            tenant = 2;
+            tenant = tenants.Blue;
         }
         board[i][j] = tenant
     }
@@ -85,3 +86,54 @@ label
 
 
 d3.select(self.frameElement).style("height", height + "px");
+
+function relocate(i, j) {
+    const curr_group = board[i][j];
+    let idx = Math.floor(Math.random()*empty.length)
+    const [x, y] = empty[idx]
+    board[i][j] = 0
+    board[x][y] = curr_group
+    empty.splice(idx, 1)
+    empty.push([i, j])
+}
+
+function is_happy(i, j) {
+    let similar = -1;  // reduce one to exclude self-matches
+    let total = 0;
+    const group = board[i][j];
+    for (let x = d3.max(0, i - 1); x <= d3.min(i + 1, n2 - 1); x++) {
+        for (let y = d3.max(0, j - 1); y <= d3.min(j + 1, n2 - 1); y++) {
+            total++;
+            if (group === board[x][y]) similar++;
+        }
+    }
+    return similar / total >= threshold;
+}
+
+function generate() {
+    unhappy = [];
+    empty = [];
+    for (let i = 0; i < n2; i++) {
+        for (let j = 0; j < n2; j++) {
+            if (!board[i][j]) empty.push([i, j])
+            else {
+                if (!is_happy(i, j)) {
+                    unhappy.push([i, j]);
+                }
+            }
+        }
+
+    }
+
+    for (const [i, j] of unhappy) {
+        relocate(i, j)
+    }
+
+    console.log(`Unhappy Count: ${unhappy.length}`)
+
+}
+
+(function interval() {
+    generate();
+    setTimeout(interval, updateDelay * 100 * 100 + updateDuration + 1000);
+})();

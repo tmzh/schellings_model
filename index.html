@@ -13,5 +13,37 @@
 
 <body>
 <script src="sketch.js"></script>
+<div id="container"></div>
+<div id="controls">
+    <div id="settings">
+        <input type="button" class="command" id="reset" value="Reset">
+        <input type="button" class="command" id="start" value="Start">
+        <input type="button" class="command" id="stop" value="Stop" disabled="disabled">
+        <input type="button" class="command" id="step" value="Step">
+    </div>
+    <div id="settings2">
+        <label for="similar">Similar:
+            <span id="similar-value">32</span>%</label>
+        <input type="range" id="similar" min="0" max="100" value="30">
+
+        <label for="red-blue">Red/Blue:
+            <span id="red-blue-value">50/50</span>%</label>
+        <input type="range" id="red-blue" min="0" max="100" value="50">
+
+        <label for="empty">Empty:
+            <span id="empty-value">10</span>%</label>
+        <input type="range" id="empty" min="0" max="100" value="10">
+
+        <label for="size">Size:
+            <span id="size-value">50x50</span></label>
+        <input type="range" id="size" min="10" max="80" value="50">
+
+        <label for="delay">Delay:
+            <span id="delay-value">100</span> ms</label>
+        <input type="range" id="delay" min="0" max="3000" value="100">
+    </div>
+</div>
+
+
 </body>
 </html>
