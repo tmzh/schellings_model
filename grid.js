@@ -1,3 +1,7 @@
+// Simulation variables
+let unhappy, empty;
+
+// Grid variables
 const formatNumber = d3.format(",d");
 
 const svg = d3.select("svg");
@@ -62,13 +66,15 @@ for (let i = 0; i < n2; i++) {
 cell = cell
     .data(d3.range(n1));
 
-cell.enter().append("rect")
-    .attr("width", 0)
-    .attr("height", cellSize)
-    .attr("x", i => (cellSpacing + cellSize) * (colIndex(i)))
-    .attr("y", i => (cellSpacing + cellSize) * (rowIndex(i)))
-    .style("fill", (d, i) => tenantColors[board[rowIndex(i)][colIndex(i)]])
-    .attr("width", cellSize);
+function redraw() {
+    cell.enter().append("rect")
+        .attr("width", 0)
+        .attr("height", cellSize)
+        .attr("x", i => (cellSpacing + cellSize) * (colIndex(i)))
+        .attr("y", i => (cellSpacing + cellSize) * (rowIndex(i)))
+        .style("fill", (d, i) => tenantColors[board[rowIndex(i)][colIndex(i)]])
+        .attr("width", cellSize);
+}
 
 label
     .attr("x", offset)
@@ -101,8 +107,8 @@ function is_happy(i, j) {
     let similar = -1;  // reduce one to exclude self-matches
     let total = 0;
     const group = board[i][j];
-    for (let x = d3.max(0, i - 1); x <= d3.min(i + 1, n2 - 1); x++) {
-        for (let y = d3.max(0, j - 1); y <= d3.min(j + 1, n2 - 1); y++) {
+    for (let x = d3.max([0, i - 1]); x <= d3.min([i + 1, n2 - 1]); x++) {
+        for (let y = d3.max([0, j - 1]); y <= d3.min([j + 1, n2 - 1]); y++) {
             total++;
             if (group === board[x][y]) similar++;
         }
@@ -129,11 +135,15 @@ function generate() {
         relocate(i, j)
     }
 
+    redraw();
+
     console.log(`Unhappy Count: ${unhappy.length}`)
 
 }
 
+redraw();
+
 (function interval() {
     generate();
-    setTimeout(interval, updateDelay * 100 * 100 + updateDuration + 1000);
+    setTimeout(interval, updateDelay * 1000);
 })();
