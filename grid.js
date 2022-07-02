@@ -1,4 +1,9 @@
 // Simulation variables
+let threshold;
+let timeoutID;
+let isPaused;
+
+// Epoch variables
 let unhappy = [],
     empty = [];
 
@@ -28,7 +33,6 @@ const label = svg.append("text")
 const n0 = cell.size();
 const n1 = 50 * 50
 const n2 = Math.floor(Math.sqrt(n1))
-let threshold = +d3.select("#similar").node().value;
 
 const tenants = {
     Empty: 0,
@@ -51,23 +55,27 @@ for (let i = 0; i < n2; i++) {
 const colIndex = i => Math.floor(i % n2)
 const rowIndex = i => Math.floor(i / n2)
 
-for (let i = 0; i < n2; i++) {
-    for (let j = 0; j < n2; j++) {
-        if (Math.random() <= 0.05) {
-            tenant = tenants.Empty;
-        } else if (Math.random() <= 0.5) {
-            tenant = tenants.Red;
-        } else {
-            tenant = tenants.Blue;
+function reset() {
+    for (let i = 0; i < n2; i++) {
+        for (let j = 0; j < n2; j++) {
+            if (Math.random() <= 0.05) {
+                tenant = tenants.Empty;
+            } else if (Math.random() <= 0.5) {
+                tenant = tenants.Red;
+            } else {
+                tenant = tenants.Blue;
+            }
+            board[i][j] = tenant
         }
-        board[i][j] = tenant
     }
+    drawGrid();
 }
+
 
 cell = cell
     .data(d3.range(n1));
 
-function redraw() {
+function drawGrid() {
     cell.enter().append("rect")
         .attr("width", 0)
         .attr("height", cellSize)
@@ -117,7 +125,7 @@ function is_happy(i, j) {
     return similar / total >= threshold;
 }
 
-function generate() {
+function runEpoch() {
     unhappy = [];
     empty = [];
     for (let i = 0; i < n2; i++) {
@@ -136,23 +144,33 @@ function generate() {
         relocate(i, j)
     }
 
-    redraw();
-
-
+    drawGrid();
 }
 
-redraw();
 
-let timeoutID;
+const startEpochs = () => {
+    runEpoch();
 
-const interval = () => {
-    generate();
-
-    if (typeof timeoutID == "number" && unhappy.length === 0) {
-            clearTimeout(timeoutID);
+    if (typeof timeoutID == "number" && (unhappy.length === 0 || isPaused)) {
+        clearTimeout(timeoutID);
     } else {
-        timeoutID = setTimeout(interval, updateDelay * 1000);
+        timeoutID = setTimeout(startEpochs, updateDelay * 1000);
     }
 };
 
-interval();
+
+const start = () => {
+    threshold = d3.select("#similar").node().value / 100;
+    isPaused = false;
+    startEpochs();
+    d3.select("#stop").property('disabled', false);
+    d3.select("#start").property('disabled', true);
+}
+
+const stop = () => {
+    isPaused = true;
+    d3.select("#stop").property('disabled', true);
+    d3.select("#start").property('disabled', false);
+}
+
+reset();

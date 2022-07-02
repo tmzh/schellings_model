@@ -9,10 +9,10 @@
 </style>
 <div id="controls">
     <div id="settings">
-        <input type="button" class="command" id="reset" value="Reset">
-        <input type="button" class="command" id="start" value="Start">
-        <input type="button" class="command" id="stop" value="Stop" disabled="disabled">
-        <input type="button" class="command" id="step" value="Step">
+        <input type="button" class="command" id="reset" value="Reset" onclick="reset()">
+        <input type="button" class="command" id="start" value="Start" onclick="start()">
+        <input type="button" class="command" id="stop" value="Stop" disabled="disabled" onclick="stop()">
+        <input type="button" class="command" id="step" value="Step" onclick="runEpoch()">
     </div>
     <div id="settings2">
         <label for="similar">Similar:
