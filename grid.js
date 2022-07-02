@@ -1,5 +1,6 @@
 // Simulation variables
-let unhappy, empty;
+let unhappy = [],
+    empty = [];
 
 // Grid variables
 const formatNumber = d3.format(",d");
@@ -27,7 +28,7 @@ const label = svg.append("text")
 const n0 = cell.size();
 const n1 = 50 * 50
 const n2 = Math.floor(Math.sqrt(n1))
-let threshold = 0.33;
+let threshold = +d3.select("#similar").node().value;
 
 const tenants = {
     Empty: 0,
@@ -47,7 +48,7 @@ for (let i = 0; i < n2; i++) {
     board[i] = new Array(n2);
 }
 
-const colIndex = i => Math.floor( i % n2)
+const colIndex = i => Math.floor(i % n2)
 const rowIndex = i => Math.floor(i / n2)
 
 for (let i = 0; i < n2; i++) {
@@ -81,7 +82,7 @@ label
     .attr("y", offset)
     .attr("dy", ".71em")
     .transition()
-    .duration(Math.abs(n1 - n0) * updateDelay + updateDuration / 2)
+    // .duration(Math.abs(n1 - n0) * updateDelay + updateDuration / 2)
     .ease("linear")
     .tween("text", function () {
         const i = d3.interpolateNumber(n0, n1);
@@ -95,7 +96,7 @@ d3.select(self.frameElement).style("height", height + "px");
 
 function relocate(i, j) {
     const curr_group = board[i][j];
-    let idx = Math.floor(Math.random()*empty.length)
+    let idx = Math.floor(Math.random() * empty.length)
     const [x, y] = empty[idx]
     board[i][j] = 0
     board[x][y] = curr_group
@@ -137,13 +138,21 @@ function generate() {
 
     redraw();
 
-    console.log(`Unhappy Count: ${unhappy.length}`)
 
 }
 
 redraw();
 
-(function interval() {
+let timeoutID;
+
+const interval = () => {
     generate();
-    setTimeout(interval, updateDelay * 1000);
-})();
+
+    if (typeof timeoutID == "number" && unhappy.length === 0) {
+            clearTimeout(timeoutID);
+    } else {
+        timeoutID = setTimeout(interval, updateDelay * 1000);
+    }
+};
+
+interval();
