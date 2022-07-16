@@ -1,7 +1,8 @@
 // Simulation variables
-let threshold;
+let threshold = 0.3;
 let timeoutID;
 let isPaused;
+let epochCount;
 
 // Epoch variables
 let unhappy = [],
@@ -56,6 +57,7 @@ const colIndex = i => Math.floor(i % n2)
 const rowIndex = i => Math.floor(i / n2)
 
 function reset() {
+    epochCount = 0;
     for (let i = 0; i < n2; i++) {
         for (let j = 0; j < n2; j++) {
             if (Math.random() <= 0.05) {
@@ -76,6 +78,12 @@ cell = cell
     .data(d3.range(n1));
 
 function drawGrid() {
+    label
+        .attr("x", offset)
+        .attr("y", offset)
+        .attr("dy", ".71em")
+        .text(`No. of epochs ${epochCount}`)
+    ;
     cell.enter().append("rect")
         .attr("width", 0)
         .attr("height", cellSize)
@@ -85,19 +93,6 @@ function drawGrid() {
         .attr("width", cellSize);
 }
 
-label
-    .attr("x", offset)
-    .attr("y", offset)
-    .attr("dy", ".71em")
-    .transition()
-    // .duration(Math.abs(n1 - n0) * updateDelay + updateDuration / 2)
-    .ease("linear")
-    .tween("text", function () {
-        const i = d3.interpolateNumber(n0, n1);
-        return function (t) {
-            this.textContent = formatNumber(Math.round(i(t)));
-        };
-    });
 
 
 d3.select(self.frameElement).style("height", height + "px");
@@ -110,6 +105,7 @@ function relocate(i, j) {
     board[x][y] = curr_group
     empty.splice(idx, 1)
     empty.push([i, j])
+    console.log(`${i}, ${j} -> ${x}, ${y}`)
 }
 
 function is_happy(i, j) {
@@ -126,18 +122,26 @@ function is_happy(i, j) {
 }
 
 function runEpoch() {
+    epochCount ++;
     unhappy = [];
     empty = [];
     for (let i = 0; i < n2; i++) {
         for (let j = 0; j < n2; j++) {
-            if (!board[i][j]) empty.push([i, j])
+            if (!board[i][j]) {
+                empty.push([i, j])
+            }
             else {
                 if (!is_happy(i, j)) {
                     unhappy.push([i, j]);
                 }
             }
         }
-
+        label
+            .attr("x", offset)
+            .attr("y", offset)
+            .attr("dy", ".71em")
+            .text(`No. of epochs ${epochCount}`)
+        ;
     }
 
     for (const [i, j] of unhappy) {
@@ -160,7 +164,6 @@ const startEpochs = () => {
 
 
 const start = () => {
-    threshold = d3.select("#similar").node().value / 100;
     isPaused = false;
     startEpochs();
     d3.select("#stop").property('disabled', false);
@@ -172,5 +175,10 @@ const stop = () => {
     d3.select("#stop").property('disabled', true);
     d3.select("#start").property('disabled', false);
 }
+
+d3.select('#similar').on('change', () => {
+    threshold = d3.select("#similar").node().value / 100;
+    d3.select('#similar-value').text(`${threshold*100}`);
+})
 
 reset();
