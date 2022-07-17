@@ -32,7 +32,7 @@ const label = svg.append("text")
     .attr("class", "label");
 
 const n0 = cell.size();
-const n1 = 50 * 50
+const n1 = 50 * 50;
 const n2 = Math.floor(Math.sqrt(n1))
 
 const tenants = {
@@ -74,25 +74,27 @@ function reset() {
 }
 
 
-cell = cell
-    .data(d3.range(n1));
+// Use this: https://bl.ocks.org/d3indepth/e890d5ad36af3d949f275e35b41a99d6
 
 function drawGrid() {
-    label
-        .attr("x", offset)
-        .attr("y", offset)
-        .attr("dy", ".71em")
-        .text(`No. of epochs ${epochCount}`)
-    ;
-    cell.enter().append("rect")
+    cell = cell
+        .data(d3.range(n1));
+
+    cell.join("rect")
         .attr("width", 0)
         .attr("height", cellSize)
         .attr("x", i => (cellSpacing + cellSize) * (colIndex(i)))
         .attr("y", i => (cellSpacing + cellSize) * (rowIndex(i)))
         .style("fill", (d, i) => tenantColors[board[rowIndex(i)][colIndex(i)]])
         .attr("width", cellSize);
-}
 
+    label
+        .attr("x", offset)
+        .attr("y", offset)
+        .attr("dy", ".71em")
+        .text(`No. of epochs ${epochCount}`)
+    ;
+}
 
 
 d3.select(self.frameElement).style("height", height + "px");
@@ -105,7 +107,6 @@ function relocate(i, j) {
     board[x][y] = curr_group
     empty.splice(idx, 1)
     empty.push([i, j])
-    console.log(`${i}, ${j} -> ${x}, ${y}`)
 }
 
 function is_happy(i, j) {
@@ -122,15 +123,14 @@ function is_happy(i, j) {
 }
 
 function runEpoch() {
-    epochCount ++;
+    epochCount++;
     unhappy = [];
     empty = [];
     for (let i = 0; i < n2; i++) {
         for (let j = 0; j < n2; j++) {
             if (!board[i][j]) {
                 empty.push([i, j])
-            }
-            else {
+            } else {
                 if (!is_happy(i, j)) {
                     unhappy.push([i, j]);
                 }
@@ -148,7 +148,7 @@ function runEpoch() {
         relocate(i, j)
     }
 
-    drawGrid();
+    d3.selectAll("rect").style("fill", (d, i) => tenantColors[board[rowIndex(i)][colIndex(i)]]);
 }
 
 
@@ -178,7 +178,7 @@ const stop = () => {
 
 d3.select('#similar').on('change', () => {
     threshold = d3.select("#similar").node().value / 100;
-    d3.select('#similar-value').text(`${threshold*100}`);
+    d3.select('#similar-value').text(`${threshold * 100}`);
 })
 
 reset();
