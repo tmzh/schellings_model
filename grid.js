@@ -32,7 +32,7 @@ const label = svg.append("text")
     .attr("class", "label");
 
 const n0 = cell.size();
-const n1 = 50 * 50;
+const n1 = 5 * 5;
 const n2 = Math.floor(Math.sqrt(n1))
 
 const tenants = {
@@ -56,29 +56,14 @@ for (let i = 0; i < n2; i++) {
 const colIndex = i => Math.floor(i % n2)
 const rowIndex = i => Math.floor(i / n2)
 
-function reset() {
-    epochCount = 0;
-    for (let i = 0; i < n2; i++) {
-        for (let j = 0; j < n2; j++) {
-            if (Math.random() <= 0.05) {
-                tenant = tenants.Empty;
-            } else if (Math.random() <= 0.5) {
-                tenant = tenants.Red;
-            } else {
-                tenant = tenants.Blue;
-            }
-            board[i][j] = tenant
-        }
-    }
-    drawGrid();
-}
-
+cell = cell
+    .data(d3.range(n1));
 
 // Use this: https://bl.ocks.org/d3indepth/e890d5ad36af3d949f275e35b41a99d6
 
 function drawGrid() {
-    cell = cell
-        .data(d3.range(n1));
+
+    cell.exit().remove();
 
     cell.join("rect")
         .attr("width", 0)
@@ -148,7 +133,7 @@ function runEpoch() {
         relocate(i, j)
     }
 
-    d3.selectAll("rect").style("fill", (d, i) => tenantColors[board[rowIndex(i)][colIndex(i)]]);
+    d3.selectAll("rect").transition().style("fill", (d, i) => tenantColors[board[rowIndex(i)][colIndex(i)]]);
 }
 
 
@@ -162,6 +147,24 @@ const startEpochs = () => {
     }
 };
 
+function reset() {
+    epochCount = 0;
+    for (let i = 0; i < n2; i++) {
+        for (let j = 0; j < n2; j++) {
+            if (Math.random() <= 0.05) {
+                tenant = tenants.Empty;
+            } else if (Math.random() <= 0.5) {
+                tenant = tenants.Red;
+            } else {
+                tenant = tenants.Blue;
+            }
+            board[i][j] = tenant
+        }
+    }
+    drawGrid();
+    d3.select("#stop").property('disabled', true);
+    d3.select("#start").property('disabled', false);
+}
 
 const start = () => {
     isPaused = false;
