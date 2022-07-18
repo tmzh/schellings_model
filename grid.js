@@ -32,7 +32,7 @@ const label = svg.append("text")
     .attr("class", "label");
 
 const n0 = cell.size();
-const n1 = 5 * 5;
+const n1 = 50 * 50;
 const n2 = Math.floor(Math.sqrt(n1))
 
 const tenants = {
@@ -62,6 +62,7 @@ cell = cell
 // Use this: https://bl.ocks.org/d3indepth/e890d5ad36af3d949f275e35b41a99d6
 
 function drawGrid() {
+    generateRandomGrid()
 
     cell.exit().remove();
 
@@ -77,8 +78,9 @@ function drawGrid() {
         .attr("x", offset)
         .attr("y", offset)
         .attr("dy", ".71em")
-        .text(`No. of epochs ${epochCount}`)
-    ;
+        .text(`No. of epochs ${epochCount}`);
+
+    colorGrid();
 }
 
 
@@ -107,6 +109,8 @@ function is_happy(i, j) {
     return similar / total >= threshold;
 }
 
+const colorGrid = () => d3.selectAll("rect").transition().style("fill", (d, i) => tenantColors[board[rowIndex(i)][colIndex(i)]]);
+
 function runEpoch() {
     epochCount++;
     unhappy = [];
@@ -132,8 +136,7 @@ function runEpoch() {
     for (const [i, j] of unhappy) {
         relocate(i, j)
     }
-
-    d3.selectAll("rect").transition().style("fill", (d, i) => tenantColors[board[rowIndex(i)][colIndex(i)]]);
+    colorGrid();
 }
 
 
@@ -147,8 +150,7 @@ const startEpochs = () => {
     }
 };
 
-function reset() {
-    epochCount = 0;
+function generateRandomGrid() {
     for (let i = 0; i < n2; i++) {
         for (let j = 0; j < n2; j++) {
             if (Math.random() <= 0.05) {
@@ -161,7 +163,13 @@ function reset() {
             board[i][j] = tenant
         }
     }
-    drawGrid();
+}
+
+function reset() {
+    stop();
+    epochCount = 0;
+    generateRandomGrid();
+    colorGrid();
     d3.select("#stop").property('disabled', true);
     d3.select("#start").property('disabled', false);
 }
@@ -184,4 +192,4 @@ d3.select('#similar').on('change', () => {
     d3.select('#similar-value').text(`${threshold * 100}`);
 })
 
-reset();
+drawGrid();
