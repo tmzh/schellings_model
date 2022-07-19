@@ -2,19 +2,15 @@
 let threshold = 0.3;
 let timeoutID;
 let isPaused;
-let epochCount;
+let epochCount = 0;
 
 // Epoch variables
 let unhappy = [],
     empty = [];
 
-// Grid variables
-const formatNumber = d3.format(",d");
-
-const svg = d3.select("svg");
-
-const width = +svg.attr("width"),
-    height = +svg.attr("height");
+// SVG variables
+const width = 960,
+    height = 990;
 
 const cellSpacing = 1,
     cellSize = Math.floor(width / 100) - cellSpacing,
@@ -23,7 +19,62 @@ const cellSpacing = 1,
 const updateDuration = 125,
     updateDelay = updateDuration / 500;
 
-let cell = svg.append("g")
+// Initialize the SVG
+const settings = d3.select("body")
+    .append("div")
+    .attr("class", "controls")
+    .attr("width", width)
+    .attr("display", "flex")
+    .attr("justify-content", "space-around")
+
+const svg = d3.select("body")
+    .append("svg")
+    .attr("width", width + "px")
+    .attr("height", height + "px")
+;
+
+
+// add controls
+function reset() {
+    stop();
+    epochCount = 0;
+    generateRandomGrid();
+    updateGrid();
+    d3.select("#stop").property('disabled', true);
+    d3.select("#start").property('disabled', false);
+}
+
+const start = () => {
+    isPaused = false;
+    startEpochs();
+    d3.select("#stop").property('disabled', false);
+    d3.select("#start").property('disabled', true);
+}
+
+const stop = () => {
+    isPaused = true;
+    d3.select("#stop").property('disabled', true);
+    d3.select("#start").property('disabled', false);
+}
+// d3 add buttons to body
+
+const add_button = (name, f, disabled = false) => {
+    settings.append("button")
+        .attr("id", name.toLowerCase())
+        .text(name)
+        .property("disabled", disabled)
+        .on("click", f)
+    ;
+}
+
+add_button("Reset", reset);
+add_button("Start", start);
+add_button("Stop", stop, true);
+add_button("step", runEpoch);
+
+
+// Draw the grid
+let grid = svg.append("g")
     .attr("class", "cells")
     .attr("transform", "translate(" + offset + "," + (offset + 30) + ")")
     .selectAll("rect");
@@ -31,7 +82,7 @@ let cell = svg.append("g")
 const label = svg.append("text")
     .attr("class", "label");
 
-const n0 = cell.size();
+const n0 = grid.size();
 const n1 = 50 * 50;
 const n2 = Math.floor(Math.sqrt(n1))
 
@@ -56,17 +107,14 @@ for (let i = 0; i < n2; i++) {
 const colIndex = i => Math.floor(i % n2)
 const rowIndex = i => Math.floor(i / n2)
 
-cell = cell
-    .data(d3.range(n1));
-
 // Use this: https://bl.ocks.org/d3indepth/e890d5ad36af3d949f275e35b41a99d6
+grid = grid
+    .data(d3.range(n1));
 
 function drawGrid() {
     generateRandomGrid()
 
-    cell.exit().remove();
-
-    cell.join("rect")
+    grid.join("rect")
         .attr("width", 0)
         .attr("height", cellSize)
         .attr("x", i => (cellSpacing + cellSize) * (colIndex(i)))
@@ -80,7 +128,7 @@ function drawGrid() {
         .attr("dy", ".71em")
         .text(`No. of epochs ${epochCount}`);
 
-    colorGrid();
+    updateGrid();
 }
 
 
@@ -109,10 +157,17 @@ function is_happy(i, j) {
     return similar / total >= threshold;
 }
 
-const colorGrid = () => d3.selectAll("rect").transition().style("fill", (d, i) => tenantColors[board[rowIndex(i)][colIndex(i)]]);
+const updateGrid = () => {
+    label
+        .attr("x", offset)
+        .attr("y", offset)
+        .attr("dy", ".71em")
+        .text(`No. of epochs ${epochCount}`)
+    ;
+    d3.selectAll("rect").transition().style("fill", (d, i) => tenantColors[board[rowIndex(i)][colIndex(i)]]);
+};
 
 function runEpoch() {
-    epochCount++;
     unhappy = [];
     empty = [];
     for (let i = 0; i < n2; i++) {
@@ -125,18 +180,13 @@ function runEpoch() {
                 }
             }
         }
-        label
-            .attr("x", offset)
-            .attr("y", offset)
-            .attr("dy", ".71em")
-            .text(`No. of epochs ${epochCount}`)
-        ;
     }
+    epochCount++;
 
     for (const [i, j] of unhappy) {
         relocate(i, j)
     }
-    colorGrid();
+    updateGrid();
 }
 
 
@@ -165,27 +215,6 @@ function generateRandomGrid() {
     }
 }
 
-function reset() {
-    stop();
-    epochCount = 0;
-    generateRandomGrid();
-    colorGrid();
-    d3.select("#stop").property('disabled', true);
-    d3.select("#start").property('disabled', false);
-}
-
-const start = () => {
-    isPaused = false;
-    startEpochs();
-    d3.select("#stop").property('disabled', false);
-    d3.select("#start").property('disabled', true);
-}
-
-const stop = () => {
-    isPaused = true;
-    d3.select("#stop").property('disabled', true);
-    d3.select("#start").property('disabled', false);
-}
 
 d3.select('#similar').on('change', () => {
     threshold = d3.select("#similar").node().value / 100;

@@ -7,6 +7,12 @@ canvas {
   display: block;
 }
 
+
+svg {
+  width: 960px;
+  height: 990px;
+}
+
 #settings {
   width: 100px;
 }
