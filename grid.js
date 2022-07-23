@@ -28,8 +28,8 @@ const width = 960,
     height = 990;
 
 const cellSpacing = 1,
-    cellSize = Math.floor(width / n0) - cellSpacing,
-    offset = Math.floor((width - n0 * cellSize - 0.9 * n0 * cellSpacing) / 2);
+    cellSize = 8,
+    offset = (cellSpacing + cellSize) * 10;
 
 const updateDuration = 125,
     updateDelay = updateDuration / 500;
@@ -38,7 +38,7 @@ const updateDuration = 125,
 const settings = d3.select("body").append("div")
     .attr("class", "settings2")
     .style("position", "relative")
-    .style("top", "0")
+    .style("left", offset + "px")
 
 
 // Controls div
@@ -59,8 +59,7 @@ const svg = d3.select("body")
 ;
 
 // Settings sliders
-// add input slider for threshold
-const addSlider = (name, min, max, step, value, f ) => {
+const addSlider = (name, min, max, step, value, f) => {
     const label = settings.append("label")
         .attr("for", name)
         .text(`${name}: ${value}%`);
@@ -75,16 +74,16 @@ const addSlider = (name, min, max, step, value, f ) => {
         .on("input", (d) => {
             f(d.target.value);
             label.text(`${name}: ${d.target.value}%`);
+            reset();
         });
 }
 
 // addSlider("Similar", 0, 100, 1,  50, (value) => populationSplit = value / 100);
-addSlider("Expected Similarity", 0, 100, 1,  50, (value) => threshold = value / 100);
-addSlider("Empty", 0, 100, 1,  50, (value) => emptyPercentage = value / 100);
+addSlider("Similarity Threshold", 0, 100, 1, threshold * 100, (value) => threshold = value / 100);
+addSlider("Empty", 0, 100, 5, emptyPercentage * 100, (value) => emptyPercentage = value / 100);
 
 
 // Control buttons
-
 function reset() {
     stop();
     epochCount = 0;
@@ -192,7 +191,7 @@ function relocate(i, j) {
     empty.push([i, j])
 }
 
-function is_happy(i, j) {
+function isHappy(i, j) {
     let similar = -1;  // reduce one to exclude self-matches
     let total = 0;
     const group = board[i][j];
@@ -223,7 +222,7 @@ function runEpoch() {
             if (!board[i][j]) {
                 empty.push([i, j])
             } else {
-                if (!is_happy(i, j)) {
+                if (!isHappy(i, j)) {
                     unhappy.push([i, j]);
                 }
             }
@@ -231,7 +230,7 @@ function runEpoch() {
     }
     epochCount++;
 
-    for (const [i, j] of unhappy) {
+    for (const [i, j] of d3.shuffle(unhappy)) {
         relocate(i, j)
     }
     updateGrid();
@@ -257,7 +256,6 @@ function generateRandomGrid() {
 
     }
 }
-
 
 
 drawGrid();

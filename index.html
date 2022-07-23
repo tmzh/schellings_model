@@ -2,13 +2,31 @@
 <meta charset="utf-8">
 <link rel="stylesheet" type="text/css" href="style.css">
 <style>
+    #chart1-container, #chart2-container {
+        height: 400px;
+        background-color: steelblue;
+    }
+
+    #chart1-container {
+        position: relative;
+        width: 400px;
+        top: 10px;
+        left: 10px;
+    }
+
+    #chart2-container {
+        position: absolute;
+        width: 400px;
+        top: 10px;
+        left: 420px;
+    }
+
     .label {
         text-anchor: start;
         font: 24px sans-serif;
     }
 </style>
 <!-- Use this https://stackoverflow.com/a/24907490 -->
-<div id="controls">
 <!--
     <div id="settings">
         <input type="button" class="command" id="reset" value="Reset" onclick="reset()">
@@ -38,8 +56,19 @@
         <input type="range" id="delay" min="0" max="3000" value="100">
     </div>
 -->
+<body>
+<div id='chart1-container'>
+    <div id='chart1'></div>
+    <div id='chart1-text'></div>
 </div>
+<div id='chart2-container'>
+    <div id='chart2'></div>
+    <div id='chart2-text'></div>
+</div>
+<div class="chart">
 
+</div>
+</body>
 <!--<svg width="960" height="990"></svg>-->
 <script src="//d3js.org/d3.v7.min.js"></script>
 <script src="grid.js">
