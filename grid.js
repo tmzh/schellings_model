@@ -6,7 +6,7 @@ TODO:
  [x] Align buttons with grid
  [ ] Display unhappy count in label
  [ ] Display unhappy count as spine chart
- [ ] Build sliders using d3
+ [x] Build sliders using d3
  */
 
 
@@ -17,7 +17,7 @@ let emptyPercentage = 0.05;
 let timeoutID;
 let isPaused;
 let epochCount = 0;
-let n0 = 100;
+let n0 = 50;
 
 // Epoch variables
 let unhappy = [],
@@ -249,11 +249,12 @@ const startEpochs = () => {
 };
 
 function generateRandomGrid() {
-    for (let i = 0; i < n2; i++) {
-        for (let j = 0; j < n2; j++) {
-            tenant = Math.random() <= emptyPercentage ? tenants.Empty : Math.random() <= populationSplit ? tenants.Red : tenants.Blue;
-            board[i][j] = tenant
-        }
+    for (let i in d3.range(n1)) {
+        let x = rowIndex(i),
+            y = colIndex(i);
+        board[x][y] = Math.random() < emptyPercentage ? tenants.Empty :
+            Math.random() < populationSplit ? tenants.Red : tenants.Blue;
+
     }
 }
 
