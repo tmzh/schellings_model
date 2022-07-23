@@ -12,6 +12,8 @@ TODO:
 
 // Simulation variables
 let threshold = 0.3;
+let populationSplit = 0.5;
+let emptyPercentage = 0.05;
 let timeoutID;
 let isPaused;
 let epochCount = 0;
@@ -34,7 +36,7 @@ const updateDuration = 125,
 
 // Settings div
 const settings = d3.select("body").append("div")
-    .attr("class", "settings")
+    .attr("class", "settings2")
     .style("position", "relative")
     .style("top", "0")
 
@@ -58,17 +60,27 @@ const svg = d3.select("body")
 
 // Settings sliders
 // add input slider for threshold
-const thresholdSlider = settings.append("input")
-    .attr("type", "range")
-    .attr("min", 0.1)
-    .attr("max", 0.9)
-    .attr("step", 0.01)
-    .attr("value", threshold)
+const addSlider = (name, min, max, step, value, f ) => {
+    const label = settings.append("label")
+        .attr("for", name)
+        .text(`${name}: ${value}%`);
 
-d3.select('#similar').on('change', () => {
-    threshold = d3.select("#similar").node().value / 100;
-    d3.select('#similar-value').text(`${threshold * 100}`);
-})
+    settings.append("input")
+        .attr("type", "range")
+        .attr("min", min)
+        .attr("max", max)
+        .attr("step", step)
+        .attr("value", value)
+        .attr("id", name)
+        .on("input", (d) => {
+            f(d.target.value);
+            label.text(`${name}: ${d.target.value}%`);
+        });
+}
+
+// addSlider("Similar", 0, 100, 1,  50, (value) => populationSplit = value / 100);
+addSlider("Expected Similarity", 0, 100, 1,  50, (value) => threshold = value / 100);
+addSlider("Empty", 0, 100, 1,  50, (value) => emptyPercentage = value / 100);
 
 
 // Control buttons
@@ -239,13 +251,7 @@ const startEpochs = () => {
 function generateRandomGrid() {
     for (let i = 0; i < n2; i++) {
         for (let j = 0; j < n2; j++) {
-            if (Math.random() <= 0.05) {
-                tenant = tenants.Empty;
-            } else if (Math.random() <= 0.5) {
-                tenant = tenants.Red;
-            } else {
-                tenant = tenants.Blue;
-            }
+            tenant = Math.random() <= emptyPercentage ? tenants.Empty : Math.random() <= populationSplit ? tenants.Red : tenants.Blue;
             board[i][j] = tenant
         }
     }
