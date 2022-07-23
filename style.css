@@ -20,20 +20,13 @@ svg {
 #controls {
   display: flex;
   margin-top: 15px;
+  margin-bottom: 10px;
 }
 
 .command {
   width: 80px;
 }
 
-#controls {
-  display: flex;
-  margin-top: 15px;
-}
-
-#settings {
-  width: 100px
-}
 
 #settings input {
   margin-bottom: 10px;

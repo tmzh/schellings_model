@@ -1,8 +1,21 @@
+/*
+TODO:
+ [ ] Reset after play starts with 1st epoch
+ [x] Make width same size as grid
+ [ ] Add space around buttons
+ [x] Align buttons with grid
+ [ ] Display unhappy count in label
+ [ ] Display unhappy count as spine chart
+ [ ] Build sliders using d3
+ */
+
+
 // Simulation variables
 let threshold = 0.3;
 let timeoutID;
 let isPaused;
 let epochCount = 0;
+let n0 = 100;
 
 // Epoch variables
 let unhappy = [],
@@ -13,28 +26,53 @@ const width = 960,
     height = 990;
 
 const cellSpacing = 1,
-    cellSize = Math.floor(width / 100) - cellSpacing,
-    offset = Math.floor((width - 100 * cellSize - 90 * cellSpacing) / 2);
+    cellSize = Math.floor(width / n0) - cellSpacing,
+    offset = Math.floor((width - n0 * cellSize - 0.9 * n0 * cellSpacing) / 2);
 
 const updateDuration = 125,
     updateDelay = updateDuration / 500;
 
-// Initialize the SVG
-const settings = d3.select("body")
+// Settings div
+const settings = d3.select("body").append("div")
+    .attr("class", "settings")
+    .style("position", "relative")
+    .style("top", "0")
+
+
+// Controls div
+const controls = d3.select("body")
     .append("div")
     .attr("class", "controls")
     .attr("width", width)
     .attr("display", "flex")
     .attr("justify-content", "space-around")
+    .style("position", "relative")
+    .style("left", offset + "px")
 
+// SVG
 const svg = d3.select("body")
     .append("svg")
     .attr("width", width + "px")
     .attr("height", height + "px")
 ;
 
+// Settings sliders
+// add input slider for threshold
+const thresholdSlider = settings.append("input")
+    .attr("type", "range")
+    .attr("min", 0.1)
+    .attr("max", 0.9)
+    .attr("step", 0.01)
+    .attr("value", threshold)
 
-// add controls
+d3.select('#similar').on('change', () => {
+    threshold = d3.select("#similar").node().value / 100;
+    d3.select('#similar-value').text(`${threshold * 100}`);
+})
+
+
+// Control buttons
+
 function reset() {
     stop();
     epochCount = 0;
@@ -56,10 +94,9 @@ const stop = () => {
     d3.select("#stop").property('disabled', true);
     d3.select("#start").property('disabled', false);
 }
-// d3 add buttons to body
 
 const add_button = (name, f, disabled = false) => {
-    settings.append("button")
+    controls.append("button")
         .attr("id", name.toLowerCase())
         .text(name)
         .property("disabled", disabled)
@@ -82,8 +119,7 @@ let grid = svg.append("g")
 const label = svg.append("text")
     .attr("class", "label");
 
-const n0 = grid.size();
-const n1 = 50 * 50;
+const n1 = n0 * n0;
 const n2 = Math.floor(Math.sqrt(n1))
 
 const tenants = {
@@ -216,9 +252,5 @@ function generateRandomGrid() {
 }
 
 
-d3.select('#similar').on('change', () => {
-    threshold = d3.select("#similar").node().value / 100;
-    d3.select('#similar-value').text(`${threshold * 100}`);
-})
 
 drawGrid();
