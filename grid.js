@@ -35,7 +35,8 @@ const updateDuration = 125,
     updateDelay = updateDuration / 500;
 
 // Settings div
-const settings = d3.select("body").append("div")
+const settings = d3.select("body")
+    .append("div")
     .attr("class", "settings2")
     .style("position", "relative")
     .style("left", offset + "px")
