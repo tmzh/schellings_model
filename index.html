@@ -2,23 +2,26 @@
 <meta charset="utf-8">
 <link rel="stylesheet" type="text/css" href="style.css">
 <style>
-    #chart1-container, #chart2-container {
-        height: 400px;
-        background-color: steelblue;
+    #chart {
+        width: 800px;
+        display: flex;
     }
 
-    #chart1-container {
-        position: relative;
-        width: 400px;
-        top: 10px;
-        left: 10px;
+    #lhs, #rhs {
+        margin-left: 10px;
+        background-color: lightblue;
     }
 
-    #chart2-container {
-        position: absolute;
-        width: 400px;
+    #lhs {
+        width: 70%;
         top: 10px;
-        left: 420px;
+    }
+
+    #rhs {
+        width: 30%;
+        top: 10px;
+        /*display: flex;*/
+        /*flex-direction: column;*/
     }
 
     .label {
@@ -57,19 +60,17 @@
     </div>
 -->
 <body>
-<div id='chart1-container'>
-    <div id='chart1'></div>
-    <div id='chart1-text'></div>
-</div>
-<div id='chart2-container'>
-    <div id='chart2'></div>
-    <div id='chart2-text'></div>
-</div>
-<div class="chart">
-
-</div>
 </body>
+<div id="chart">
+    <div id='lhs'>
+        <div class="summary"></div>
+        <div id='chart1'>chart 1</div>
+    </div>
+    <div id='rhs'>
+        <div id='chart2'></div>
+        <div id='chart2-text'></div>
+    </div>
+</div>
 <!--<svg width="960" height="990"></svg>-->
 <script src="//d3js.org/d3.v7.min.js"></script>
-<script src="grid.js">
-</script>
+<script src="grid.js"></script>

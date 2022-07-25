@@ -35,25 +35,21 @@ const updateDuration = 125,
     updateDelay = updateDuration / 500;
 
 // Settings div
-const settings = d3.select("body")
+const settings = d3.selectAll("#chart2")
     .append("div")
     .attr("class", "settings2")
-    .style("position", "relative")
-    .style("left", offset + "px")
 
 
 // Controls div
-const controls = d3.select("body")
+const controls = d3.selectAll("#chart2")
     .append("div")
     .attr("class", "controls")
     .attr("width", width)
     .attr("display", "flex")
     .attr("justify-content", "space-around")
-    .style("position", "relative")
-    .style("left", offset + "px")
 
 // SVG
-const svg = d3.select("body")
+const svg = d3.selectAll("#chart1")
     .append("svg")
     .attr("width", width + "px")
     .attr("height", height + "px")
@@ -125,7 +121,7 @@ add_button("step", runEpoch);
 // Draw the grid
 let grid = svg.append("g")
     .attr("class", "cells")
-    .attr("transform", "translate(" + offset + "," + (offset + 30) + ")")
+    // .attr("transform", "translate(" + offset + "," + (offset + 30) + ")")
     .selectAll("rect");
 
 const label = svg.append("text")
@@ -171,8 +167,6 @@ function drawGrid() {
         .attr("width", cellSize);
 
     label
-        .attr("x", offset)
-        .attr("y", offset)
         .attr("dy", ".71em")
         .text(`No. of epochs ${epochCount}`);
 
@@ -207,8 +201,6 @@ function isHappy(i, j) {
 
 const updateGrid = () => {
     label
-        .attr("x", offset)
-        .attr("y", offset)
         .attr("dy", ".71em")
         .text(`No. of epochs ${epochCount}`)
     ;
