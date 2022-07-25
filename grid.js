@@ -24,12 +24,13 @@ let unhappy = [],
     empty = [];
 
 // SVG variables
-const width = 960,
-    height = 990;
-
 const cellSpacing = 1,
     cellSize = 8,
     offset = (cellSpacing + cellSize) * 10;
+
+const width = (cellSpacing + cellSize) * n0 + offset,
+    height = 990;
+
 
 const updateDuration = 125,
     updateDelay = updateDuration / 500;
