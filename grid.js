@@ -35,13 +35,13 @@ const updateDuration = 125,
     updateDelay = updateDuration / 500;
 
 // Settings div
-const settings = d3.selectAll("#chart2")
+const settings = d3.selectAll("#rhs-top")
     .append("div")
-    .attr("class", "settings2")
+    // .attr("class", "settings2")
 
 
 // Controls div
-const controls = d3.selectAll("#chart2")
+const controls = d3.selectAll("#rhs-bottom")
     .append("div")
     .attr("class", "controls")
     .attr("width", width)
@@ -49,7 +49,7 @@ const controls = d3.selectAll("#chart2")
     .attr("justify-content", "space-around")
 
 // SVG
-const svg = d3.selectAll("#chart1")
+const svg = d3.selectAll("#graph")
     .append("svg")
     .attr("width", width + "px")
     .attr("height", height + "px")
