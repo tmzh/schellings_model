@@ -9,7 +9,6 @@
 
     #lhs, #rhs {
         margin-left: 10px;
-        background-color: lightblue;
     }
 
     #lhs {
@@ -20,8 +19,13 @@
     #rhs {
         width: 30%;
         top: 10px;
-        /*display: flex;*/
-        /*flex-direction: column;*/
+    }
+
+    #controls {
+        top: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
     }
 
     .label {
@@ -64,7 +68,7 @@
 <div id="chart">
     <div id='lhs'>
         <div id="summary"></div>
-        <div id="graph">chart 1</div>
+        <div id="graph"></div>
     </div>
     <div id='rhs'>
         <div id="rhs-top"></div>

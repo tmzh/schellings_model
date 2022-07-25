@@ -57,8 +57,7 @@ const svg = d3.selectAll("#graph")
 
 // Settings sliders
 const addSlider = (name, min, max, step, value, f) => {
-    const label = settings.append("label")
-        .attr("for", name)
+    const label = settings.append("div")
         .text(`${name}: ${value}%`);
 
     settings.append("input")
@@ -117,15 +116,21 @@ add_button("Start", start);
 add_button("Stop", stop, true);
 add_button("step", runEpoch);
 
+// Summary lines
+const summary = d3.selectAll("#summary")
 
-// Draw the grid
+const epochCountLabel = summary.append("div")
+    .attr("class", "label");
+
+const unhappyCountLabel = summary.append("div")
+    .attr("class", "label");
+
+// Grid
 let grid = svg.append("g")
     .attr("class", "cells")
     // .attr("transform", "translate(" + offset + "," + (offset + 30) + ")")
     .selectAll("rect");
 
-const label = svg.append("text")
-    .attr("class", "label");
 
 const n1 = n0 * n0;
 const n2 = Math.floor(Math.sqrt(n1))
@@ -166,7 +171,7 @@ function drawGrid() {
         .style("fill", (d, i) => tenantColors[board[rowIndex(i)][colIndex(i)]])
         .attr("width", cellSize);
 
-    label
+    epochCountLabel
         .attr("dy", ".71em")
         .text(`No. of epochs ${epochCount}`);
 
@@ -200,9 +205,13 @@ function isHappy(i, j) {
 }
 
 const updateGrid = () => {
-    label
+    epochCountLabel
         .attr("dy", ".71em")
-        .text(`No. of epochs ${epochCount}`)
+        .text(`No. of epochs: ${epochCount}`)
+    ;
+   unhappyCountLabel
+        .attr("dy", ".71em")
+        .text(`Unhappy tenants: ${unhappy.length}`)
     ;
     d3.selectAll("rect").transition().style("fill", (d, i) => tenantColors[board[rowIndex(i)][colIndex(i)]]);
 };
