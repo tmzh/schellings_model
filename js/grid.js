@@ -9,19 +9,17 @@ let epochCount = 0;
 let gridSize = 50;
 
 // Epoch variables
-let unhappy = [],
-    empty = [];
+let unhappy = [];
+let empty = [];
+let unhappyCounts = [];
+let similarityCounts = [];
 
 // SVG variables
-const cellSpacing = 1,
-    cellSize = 8,
-    offset = (cellSpacing + cellSize) * 10;
-
-const width = (cellSpacing + cellSize) * gridSize + offset,
-    height = 990;
-
-const updateDuration = 125,
-    updateDelay = updateDuration / 500;
+const cellSpacing = 1;
+const cellSize = 8;
+const offset = (cellSpacing + cellSize) * 10;
+const width = (cellSpacing + cellSize) * gridSize + offset;
+const height = 990;
 
 // Settings div
 const settings = d3.selectAll("#rhs-top")
@@ -62,7 +60,7 @@ const addSlider = (name, min, max, step, value, f) => {
         });
 }
 
-addSlider("Similar", 0, 100, 1, 50, (value) => populationSplit = value / 100);
+addSlider("Population Distribution", 0, 100, 1, 50, (value) => populationSplit = value / 100);
 addSlider("Similarity Threshold", 0, 100, 1, threshold * 100, (value) => threshold = value / 100);
 addSlider("Empty", 0, 100, 5, emptyPercentage * 100, (value) => emptyPercentage = value / 100);
 
@@ -105,18 +103,13 @@ add_button("Stop", stop, true);
 add_button("step", runEpoch);
 
 // Summary lines
-const summary = d3.selectAll("#summary")
-
-const epochCountLabel = summary.append("div")
-    .attr("class", "label");
-
-const unhappyCountLabel = summary.append("div")
-    .attr("class", "label");
+const summary = d3.select("#summary");
+const epochCountLabel = summary.append("div").attr("class", "label");
+const unhappyCountLabel = summary.append("div").attr("class", "label");
 
 // Grid
 let grid = svg.append("g")
     .attr("class", "cells")
-    // .attr("transform", "translate(" + offset + "," + (offset + 30) + ")")
     .selectAll("rect");
 
 
@@ -143,9 +136,9 @@ for (let i = 0; i < gridSize; i++) {
 const colIndex = i => Math.floor(i % gridSize)
 const rowIndex = i => Math.floor(i / gridSize)
 
-grid = grid
-    .data(d3.range(noAgents));
+grid = grid.data(d3.range(noAgents));
 
+// Draw Grid
 function drawGrid() {
     generateRandomGrid()
 
@@ -237,7 +230,7 @@ const startEpochs = () => {
     if (typeof timeoutID == "number" && (unhappy.length === 0 || isPaused)) {
         clearTimeout(timeoutID);
     } else {
-        timeoutID = setTimeout(startEpochs, updateDelay * 1000);
+        timeoutID = setTimeout(startEpochs, 100);
     }
 };
 
