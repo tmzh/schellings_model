@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+    #chart {
+        width: 800px;
+        display: flex;
+    }
+
+    #lhs,
+    #rhs {
+        margin-left: 10px;
+    }
+
+    #lhs {
+        top: 10px;
+    }
+
+    #rhs {
+        top: 10px;
+    }
+
+    #controls {
+        top: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+    }
+
+    .label {
+        text-anchor: start;
+        font: 24px sans-serif;
+    }
+</style>
+
+<body>
+</body>
+<div id="chart">
+    <div id='lhs'>
+        <div id="summary"></div>
+        <div id="graph"></div>
+    </div>
+    <div id='rhs'>
+        <div id="rhs-top"></div>
+        <div id="rhs-bottom"></div>
+    </div>
+</div>
+<script src="//d3js.org/d3.v7.min.js"></script>
+<script src="js/grid.js"></script>
