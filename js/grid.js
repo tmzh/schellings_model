@@ -6,6 +6,7 @@ let emptyPercentage = 0.05;
 let timeoutID;
 let isPaused;
 let epochCount = 0;
+let similarityCount = 0;
 let gridSize = 50;
 
 // Epoch variables
@@ -138,6 +139,66 @@ const rowIndex = i => Math.floor(i / gridSize)
 
 grid = grid.data(d3.range(noAgents));
 
+// Spline chart
+const margin = { top: 20, right: 20, bottom: 30, left: 50 };
+const chartWidth = 400 - margin.left - margin.right;
+const chartHeight = 300 - margin.top - margin.bottom;
+
+const xScale = d3.scaleLinear()
+    .domain([0, epochCount])
+    .range([0, chartWidth]);
+
+const yScale1 = d3.scaleLinear()
+    .domain([0, noAgents])
+    .range([chartHeight, 0]);
+
+const yScale2 = d3.scaleLinear()
+    .domain([0, 1])
+    .range([chartHeight, 0]);
+
+const xAxis = d3.axisBottom(xScale);
+const yAxis1 = d3.axisLeft(yScale1);
+const yAxis2 = d3.axisRight(yScale2);
+
+const line1 = d3.line()
+    .x((d, i) => xScale(i))
+    .y(d => yScale1(d));
+
+const line2 = d3.line()
+    .x((d, i) => xScale(i))
+    .y(d => yScale2(d));
+
+const chart = d3.select("#chart")
+    .append("svg")
+    .attr("width", chartWidth + margin.left + margin.right)
+    .attr("height", chartHeight + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+chart.append("g")
+    .attr("class", "x axis")
+    .attr("transform", `translate(0, ${chartHeight})`)
+    .call(xAxis);
+
+chart.append("g")
+    .attr("class", "y axis left")
+    .call(yAxis1);
+
+chart.append("g")
+    .attr("class", "y axis right")
+    .attr("transform", `translate(${chartWidth}, 0)`)
+    .call(yAxis2);
+
+const unhappyPath = chart.append("path")
+    .datum(unhappyCounts)
+    .attr("class", "line")
+    .attr("d", line1);
+
+const similarityPath = chart.append("path")
+    .datum(similarityCounts)
+    .attr("class", "line")
+    .attr("d", line2);
+
 // Draw Grid
 function drawGrid() {
     generateRandomGrid()
@@ -183,27 +244,30 @@ function similarityScore(group, i, j) {
     return { similar, total };
 }
 
-function isHappy(i, j) {
+const isHappy = (i, j) => {
     const group = board[i][j];
     let { similar, total } = similarityScore(group, i, j);
+    similarityCount += similar;
     return similar / total >= threshold;
 }
 
 const updateGrid = () => {
-    epochCountLabel
-        .attr("dy", ".71em")
-        .text(`No. of epochs: ${epochCount}`)
-        ;
-    unhappyCountLabel
-        .attr("dy", ".71em")
-        .text(`Unhappy tenants: ${unhappy.length}`)
-        ;
-    d3.selectAll("rect").transition().style("fill", (d, i) => tenantColors[board[rowIndex(i)][colIndex(i)]]);
+    epochCountLabel.attr("dy", ".71em").text(`No. of epochs: ${epochCount}`);
+    unhappyCountLabel.attr("dy", ".71em").text(`Unhappy tenants: ${unhappy.length}`);
+    d3.selectAll("rect").style("fill", (d, i) => tenantColors[board[rowIndex(i)][colIndex(i)]]);
 };
+
+const updateSplineChart = () => {
+
+    unhappyPath.datum(unhappyCounts).attr("d", line1);
+    similarityPath.datum(similarityCounts).attr("d", line2);
+}
+
 
 function runEpoch() {
     unhappy = [];
     empty = [];
+    similarityCount = 0;
     for (let i = 0; i < gridSize; i++) {
         for (let j = 0; j < gridSize; j++) {
             if (!board[i][j]) {
@@ -220,7 +284,12 @@ function runEpoch() {
     for (const [i, j] of d3.shuffle(unhappy)) {
         relocate(i, j)
     }
+
+    similarityCounts.push(similarityCount);
+    unhappyCounts.push(unhappy.length);
+
     updateGrid();
+    updateSplineChart();
 }
 
 
@@ -230,7 +299,7 @@ const startEpochs = () => {
     if (typeof timeoutID == "number" && (unhappy.length === 0 || isPaused)) {
         clearTimeout(timeoutID);
     } else {
-        timeoutID = setTimeout(startEpochs, 100);
+        timeoutID = setTimeout(startEpochs, 300);
     }
 };
 
