@@ -1,1 +1,17 @@
-# schellings_model
+## Schelling's Model: A Brief Introduction
+
+Schelling’s model of segregation has become a seminal demonstration of how individual intentions and preferences can aggregate into systematic societal outcomes that differ markedly from those intentions. Originally introduced in Schelling’s 1971 paper ‘Dynamic Models of Segregation,’ the model shows how even mild preferences for living near one’s own type can lead to strikingly segregated residential patterns (Schelling, 1971). I first encountered this in the Coursera course ‘Model Thinking,’ taught by Scott Page, and since then it has always fascinated me as a demonstration of how collective outcome can be systematically different from the intentions of the individual involved.
+
+## An Interactive Simulator for Schelling's Model
+Here is an implementation of Schelling’s model in the form of an agent-based simulation. The simulation demonstrates the core dynamics of Schelling’s model and the drivers of the unintended macro-level outcomes that can emerge from micro-level behaviors and preferences. 
+
+In the model, a population of two types of agents—‘red’ and ‘blue’—are distributed randomly on a grid. Each agent has a threshold percentage of like neighbors it prefers to have in its local neighborhood. If an agent’s threshold is not met, it moves to a new random location on the grid. These movements continue until all agents have thresholds satisfied and the system stabilizes.
+
+
+## Exploring the Simulator
+
+Even with relatively low thresholds, quite striking patterns of segregation emerge. With a threshold of merely 25-30%—that is, agents are satisfied if only one-quarter to one-third of their neighbors are of their same type—the final distribution demonstrates substantial clustering and segregation. Higher thresholds amplify this effect in a nonlinear fashion. At 50% or greater, the result is extreme segregation into isolated, homogenous clusters.
+
+These outcomes reveal some of the mechanisms that can drive the unforeseen aggregation of individual behaviors into collective segregation. First, small initial clusters of like agents form by chance. These clusters then attract more agents of the same type, as those agents move to satisfy their thresholds. This positive feedback loop amplifies any nascent segregation. Second, segregation is an absorption state—once established, it is self-perpetuating as available opposite-type agents are cut off from one another by the clusters. Third, the randomness and asynchronicity of agent movements create path dependencies that lead to unpredictability in the final patterns.
+
+In conclusion, this simulation model demonstrates how individual preferences for living near similar others can generate unintended macro-level segregation even when those preferences are relatively mild. The model illustrates three mechanisms by which this can occur: positive feedback loops that amplify small initial clusters; absorption states that perpetuate once established; and path dependencies that make the final outcomes unpredictable. As such, Schelling’s model provides critical insights into how macro-level social phenomena can arise not from individuals’ overt preferences for segregation but rather as an unintended consequence of more subtle individual behaviors. Overall, this model highlights the need to consider how social dynamics and interactions aggregate in shaping collective outcomes, rather than focusing solely on individuals’ attributes or intentions.
